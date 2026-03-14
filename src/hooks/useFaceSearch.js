@@ -71,7 +71,7 @@ export const useFaceSearch = () => {
         return;
       }
 
-      const faceMatcher = createFaceMatcher(referenceDescriptor, 0.5);
+      const faceMatcher = createFaceMatcher(referenceDescriptor, 0.45); // Stricter threshold
       const matches = [];
       
       // Process in batches
@@ -107,7 +107,7 @@ export const useFaceSearch = () => {
               }
             }
             
-            if (bestMatchObj && highestConfidence > 0.5) { // Threshold equivalent
+            if (bestMatchObj && highestConfidence > 0.55) { // Stricter check
               matches.push({
                 file,
                 blob,
