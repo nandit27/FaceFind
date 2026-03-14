@@ -51,8 +51,8 @@ export const useFaceSearch = () => {
     setMatchedResults([]);
     setProcessedCount(0);
     
-    const FOLDER_ID = import.meta.env.VITE_GOOGLE_DRIVE_FOLDER_ID;
-    const API_KEY = import.meta.env.VITE_GOOGLE_API_KEY;
+    const FOLDER_ID = import.meta.env.VITE_GOOGLE_DRIVE_FOLDER_ID?.trim();
+    const API_KEY = import.meta.env.VITE_GOOGLE_API_KEY?.trim();
     
     if (!FOLDER_ID || !API_KEY || FOLDER_ID === "your_folder_id_here") {
       setError("Google Drive connection not configured. Please set the VITE_ variables in .env.");
