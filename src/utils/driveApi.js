@@ -6,7 +6,9 @@ export const fetchDriveFiles = async (folderId, apiKey) => {
     
     const response = await fetch(url);
     if (!response.ok) {
-      throw new Error(`Google Drive API Error: ${response.statusText}`);
+      const errBody = await response.json().catch(() => ({}));
+      const message = errBody?.error?.message || response.statusText || `HTTP ${response.status}`;
+      throw new Error(`Google Drive API Error (${response.status}): ${message}`);
     }
     
     const data = await response.json();
