@@ -30,7 +30,7 @@ export const extractFaceDescriptor = async (imageElement) => {
 
 export const extractAllFaceDescriptors = async (imageElement) => {
   const detections = await faceapi
-    .detectAllFaces(imageElement, new faceapi.SsdMobilenetv1Options())
+    .detectAllFaces(imageElement, new faceapi.SsdMobilenetv1Options({ minConfidence: 0.4 }))
     .withFaceLandmarks()
     .withFaceDescriptors();
     

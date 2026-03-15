@@ -3,9 +3,10 @@ import { Button } from './ui/moving-border';
 import { DownloadCloud, CheckSquare, Square } from 'lucide-react';
 import { downloadImagesAsZip } from '../utils/downloader';
 
-export const DownloadBar = ({ results, onSelectAll }) => {
+export const DownloadBar = ({ results, onSelectAll, getFullResBlob }) => {
   const [isDownloading, setIsDownloading] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [status, setStatus] = useState("Zipping"); // can be "Fetching", "Zipping"
 
   const selectedCount = results.filter(r => r.selected).length;
   const allSelected = selectedCount === results.length && results.length > 0;
@@ -16,9 +17,25 @@ export const DownloadBar = ({ results, onSelectAll }) => {
 
     setIsDownloading(true);
     setProgress(0);
+    setStatus("Fetching");
+
     try {
-      await downloadImagesAsZip(selectedImages, (percent) => {
-        setProgress(percent);
+      // 1. Fetch full resolution blobs for the selected images
+      const imagesWithBlobs = [];
+      for (let i = 0; i < selectedImages.length; i++) {
+        const item = selectedImages[i];
+        const blob = await getFullResBlob(item.file);
+        if (blob) {
+          imagesWithBlobs.push({ ...item, blob });
+        }
+        setProgress(Math.round(((i + 1) / selectedImages.length) * 50)); // 0-50% for fetching
+      }
+
+      setStatus("Zipping");
+      
+      // 2. Pass them to the zippper
+      await downloadImagesAsZip(imagesWithBlobs, (percent) => {
+        setProgress(50 + (percent / 2)); // 50-100% for zipping
       });
     } catch (err) {
       console.error("Download failed:", err);
@@ -26,6 +43,7 @@ export const DownloadBar = ({ results, onSelectAll }) => {
     } finally {
       setIsDownloading(false);
       setProgress(0);
+      setStatus("Zipping");
     }
   };
 
@@ -68,7 +86,7 @@ export const DownloadBar = ({ results, onSelectAll }) => {
             disabled={selectedCount === 0 || isDownloading}
           >
             {isDownloading ? (
-              <span className="font-mono">{Math.round(progress)}% Zipping</span>
+              <span className="font-mono">{Math.round(progress)}% {status}</span>
             ) : (
               <>
                 <DownloadCloud className="w-5 h-5" />

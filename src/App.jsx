@@ -20,6 +20,7 @@ function App() {
     initialize,
     processReferencePhoto,
     startSearch,
+    getFullResBlob,
     toggleSelection,
     toggleSelectAll,
     reset,
@@ -119,7 +120,8 @@ function App() {
               />
               <DownloadBar 
                 results={matchedResults} 
-                onSelectAll={toggleSelectAll} 
+                onSelectAll={toggleSelectAll}
+                getFullResBlob={getFullResBlob} 
               />
             </>
           ) : (

@@ -13,8 +13,10 @@ export const downloadImagesAsZip = async (images, progressCallback) => {
       else if (img.mimeType === "image/webp") ext = "webp";
       else if (img.mimeType === "image/jpeg") ext = "jpg";
     }
-    const filename = `${img.name || `match_${index + 1}`}.${ext}`;
-    folder.file(filename, img.blob);
+    const filename = `${img.file?.name || `match_${index + 1}`}.${ext}`;
+    if (img.blob) {
+      folder.file(filename, img.blob);
+    }
   });
 
   const content = await zip.generateAsync({
